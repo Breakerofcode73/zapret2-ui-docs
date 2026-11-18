@@ -1,0 +1,20 @@
+export const STRAT_PROVIDES = {
+  fake: ["fake", "ttl", "badsum", "md5", "ipid", "repeat", "ts"],
+  syndata: ["fake", "ttl", "badsum", "md5"],
+  rst: ["fake", "ttl", "badsum", "md5", "repeat"],
+  send: ["dup", "ttl", "badsum", "md5", "repeat", "ts", "ipid"],
+  pktmod: ["ts", "ipid", "ttl"],
+  drop: ["drop"],
+  multisplit: ["split", "seqovl", "pos", "repeat"],
+  multidisorder: ["disorder", "seqovl", "pos"],
+  multidisorder_legacy: ["disorder", "seqovl", "pos"],
+  fakedsplit: ["fake", "split", "seqovl", "ttl", "badsum", "md5", "pos"],
+  fakeddisorder: ["fake", "disorder", "seqovl", "ttl", "badsum", "md5", "pos"],
+  hostfakesplit: ["fake", "host", "split", "pos", "ttl", "ts", "ipid", "repeat"],
+  tcpseg: ["split", "seqovl", "pos"],
+  oob: ["oob"],
+  udplen: ["pad"],
+  dht_dn: ["pad"],
+  tls_client_hello_clone: ["fake", "host"],
+  http_domcase: ["host"], http_hostcase: ["host"], http_methodeol: ["host"], http_unixeol: ["host"]
+};

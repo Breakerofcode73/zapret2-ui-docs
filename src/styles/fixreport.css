@@ -1,0 +1,29 @@
+.fr-list { display: flex; flex-direction: column; gap: 14px; margin: 14px 0; }
+.fr-card { border: 1px solid var(--line); border-left-width: 4px; border-radius: 12px; background: var(--card); overflow: hidden; }
+.fr-card.crit { border-left-color: var(--red); }
+.fr-card.warn { border-left-color: var(--amber); }
+.fr-card.info { border-left-color: var(--cyan); }
+.fr-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 11px 15px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.fr-rule { font: 700 12px var(--mono); color: #04101c; background: linear-gradient(135deg, var(--cyan), var(--blue)); padding: 2px 9px; border-radius: 20px; }
+.fr-title { font-size: 14.5px; font-weight: 600; }
+.fr-meta { margin-left: auto; font: 11px var(--mono); color: var(--dim); }
+.fr-body { padding: 12px 16px 16px; }
+.fr-sec { margin: 10px 0; font-size: 14px; line-height: 1.65; }
+.fr-sec b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
+.fr-sec.problem b { color: var(--red); }
+.fr-sec.action b { color: var(--cyan); }
+.fr-sec.why b { color: var(--green); }
+.fr-refs { font-size: 12.5px; color: var(--dim); margin-top: 10px; }
+.fr-refs a { margin-right: 4px; }
+.fr-diff { border: 1px solid var(--line); border-radius: 9px; overflow: hidden; margin: 10px 0; background: #060a12; }
+.fr-diff-h { font: 11px var(--mono); color: var(--dim); padding: 5px 10px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.fr-l { display: grid; grid-template-columns: 46px 18px 1fr; font: 12.5px/1.6 var(--mono); }
+.fr-l i { font-style: normal; text-align: right; padding: 1px 8px; color: #3b4a74; user-select: none; }
+.fr-l s { text-decoration: none; text-align: center; color: var(--dim); }
+.fr-l span { padding: 1px 10px 1px 0; white-space: pre-wrap; word-break: break-word; }
+.fr-l.del { background: rgba(248, 113, 113, .12); }
+.fr-l.del s, .fr-l.del span { color: #ffb4b4; }
+.fr-l.add { background: rgba(74, 222, 128, .12); }
+.fr-l.add s, .fr-l.add span { color: #b6f5cd; }
+.fr-l.ctx span { color: var(--dim); }
+.fr-empty { color: var(--dim); font-size: 13px; padding: 8px 0; }

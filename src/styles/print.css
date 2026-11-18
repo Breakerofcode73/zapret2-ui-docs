@@ -1,0 +1,26 @@
+@media print {
+  .bg, .side, .top, .pager, .scrim, .vt-toast, .copy, .burger, .skip,
+  .ma-bar, .ma-cats, .vt-bar, .hs-bar, .fx-bar, .bd-drop-bar, .rc-rep-a, .ma-act, .ik-bar { display: none !important; }
+  body { background: #fff; color: #111; font-size: 11pt; }
+  .main { margin-left: 0; }
+  .content { max-width: none; padding: 0; animation: none; }
+  .page-h h1, .deep-h h1 { color: #111; -webkit-text-fill-color: #111; background: none; }
+  h2 { border-bottom: 1px solid #999; color: #111; }
+  h2::before { content: none; }
+  .note, .count, .lead, .ma-mech, .vt-desc { color: #333; }
+  .fn, .ma, .ca, .vt-fn, .hs-card, .rc-rep, .vt-issue, .bug, .api, .fr-card, .vt-rcard {
+    background: #fff; border: 1px solid #bbb; border-left-width: 3px; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .code pre, .wire, .lex-code, .hs-diff, .vt-diff, .bf-diff, .fr-diff {
+    background: #f6f6f6; color: #111; border: 1px solid #ccc; box-shadow: none; white-space: pre-wrap; }
+  code { color: #0a5; }
+  .stats span { background: #fff; border: 1px solid #bbb; color: #333; }
+  .stats b { color: #111; }
+  table, .tbl, .kv, .ma-args, .vt-args, .mk-tbl, .args4 { border-collapse: collapse; }
+  td, th { border: 1px solid #bbb !important; color: #111; }
+  .chip, .tag, .vt-kind, .ma-kind, .mk-cert { background: #eee !important; color: #111 !important; border: 1px solid #bbb; }
+  a { color: #0645ad; text-decoration: underline; }
+  a[href^="#"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #666; }
+  details { display: block; }
+  details > summary { display: none; }
+  .sec, .ma-group, .hs-card { break-inside: avoid; }
+}
