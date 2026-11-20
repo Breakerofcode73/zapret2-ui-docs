@@ -12,6 +12,9 @@ import Coverage from "./pages/Coverage";
 import Builder from "./pages/Builder";
 import Diagnose from "./pages/Diagnose";
 import Fixer from "./pages/Fixer";
+import FixBat from "./pages/FixBat";
+import Hostlists from "./pages/Hostlists";
+import BatLua from "./pages/BatLua";
 import UpdateDiff from "./pages/UpdateDiff";
 import Vault from "./pages/Vault";
 import History from "./pages/History";
@@ -31,8 +34,21 @@ import { DEEP, coveredNames } from "./data/deep";
 import { subscribe } from "./lib/vault";
 import { collectMy } from "./lib/myDoc";
 import "./styles/print.css";
-
+import Strategy from "./pages/Strategy";
+import StrategyTest from "./pages/StrategyTest";
+import Audit from "./pages/Audit";
+import Describe from "./pages/Describe";
+import Forge from "./pages/Forge";
+import ForgeGuide from "./pages/ForgeGuide";
 const PAGES = [
+      { id: "forgeguide", group: "Мои функции", title: "Кузница — как работает", C: ForgeGuide },
+    { id: "describe", group: "Мои функции", title: "Описание → функция", C: Describe },
+    { id: "audit", group: "Практика", title: "Разбор всех BAT", C: Audit },
+    { id: "strategytest", group: "Практика", title: "Тест стратегий", C: StrategyTest },
+    { id: "fixbat", group: "Практика", title: "Исправление BAT", C: FixBat },
+  { id: "hostlists", group: "Практика", title: "Списки доменов", C: Hostlists },
+    { id: "strategy", group: "Практика", title: "Стратегия по запросу", C: Strategy },
+  { id: "batlua", group: "Практика", title: "Проверка BAT + Lua", C: BatLua },
   { id: "assistant", group: "Мои функции", title: "Локальный ассистент", C: Assistant },
   { id: "overview", group: "Начало", title: "Обзор и архитектура", C: Overview },
   { id: "contract", group: "Начало", title: "Контракт desync-функции", C: Contract },
@@ -58,7 +74,8 @@ const PAGES = [
   { id: "capi", group: "Справочник", title: "C API → Lua", C: CApi, fns: capiFns },
   { id: "antidpi", group: "Справочник", title: "zapret-antidpi.lua", C: Antidpi, fns: antidpiFns },
   { id: "lib", group: "Справочник", title: "zapret-lib.lua", C: Lib, fns: libFns },
-  { id: "auto", group: "Справочник", title: "zapret-auto.lua", C: Auto, fns: autoFns }
+  { id: "auto", group: "Справочник", title: "zapret-auto.lua", C: Auto, fns: autoFns },
+    { id: "forge", group: "Мои функции", title: "Кузница функций", C: Forge },
 ];
 const GROUPS = ["Начало", "Разборы", "Мои функции", "Практика", "Справочник"];
 const TOTAL = [...capiFns, ...antidpiFns, ...libFns, ...autoFns].length;

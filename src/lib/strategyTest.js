@@ -1,0 +1,191 @@
+const QUIC_HINT = ["youtube.com", "googlevideo.com", "gvt1.com", "gvt2.com", "facebook.com", "fbcdn.net", "instagram.com", "cdninstagram.com", "google.com", "cloudflare.com", "discord.com"];
+const psq = s => "'" + String(s).replace(/'/g, "''") + "'";
+const truthy = v => v === true || v === 1 || /^(true|1|yes|ok)$/i.test(String(v));
+
+export function domainProtos(d) {
+  d = String(d).toLowerCase().replace(/^www\./, "");
+  const p = ["tls", "http"];
+  if (QUIC_HINT.some(h => d === h || d.endsWith("." + h))) p.push("quic");
+  return p;
+}
+
+function logicalCommands(text) {
+  const raw = String(text).split(/\r?\n/); const cmds = []; let buf = "", start = 0;
+  raw.forEach((line, i) => {
+    const cont = /\^\s*$/.test(line);
+    if (!buf) start = i;
+    buf += line.replace(/\^\s*$/, " ") + " ";
+    if (!cont) { cmds.push({ text: buf.trim(), line: start + 1 }); buf = ""; }
+  });
+  if (buf.trim()) cmds.push({ text: buf.trim(), line: start + 1 });
+  return cmds;
+}
+const flagsOf = s => [...s.matchAll(/(--[a-z0-9][a-z0-9-]*)(?:=("[^"]*"|[^\s^]+))?/gi)].map(m => m[0]);
+const isGlobal = f => /^--(wf-|lua-init|blob|lua-gc|debug|ctrack|ipcache|reasm|payload-disable|server|writable|chdir|bind-fix|dry-run|comment|intercept|version)/i.test(f);
+const val = f => f.split("=").slice(1).join("=").replace(/^"|"$/g, "");
+
+export function parseProfiles(bat) {
+  const cmds = logicalCommands(bat).filter(c => /winws2|nfqws2/i.test(c.text));
+  if (!cmds.length) return { global: [], profiles: [] };
+  const flags = flagsOf(cmds[0].text);
+  const global = [], profiles = []; let cur = null;
+  flags.forEach(f => {
+    const name = f.split("=")[0].toLowerCase();
+    if (name === "--new") { cur = { name: f.includes("=") ? val(f) : "profile" + (profiles.length + 1), args: [], skip: false }; profiles.push(cur); return; }
+    if (name === "--name") { if (cur) cur.name = val(f); return; }
+    if (name === "--skip") { if (cur) cur.skip = true; return; }
+    if (cur && !isGlobal(f)) cur.args.push(f); else global.push(f);
+  });
+  if (!profiles.length && flags.some(f => /^--lua-desync/i.test(f)))
+    profiles.push({ name: "default", args: flags.filter(f => !isGlobal(f)), skip: false });
+  return { global, profiles };
+}
+
+export function toStrategies(parsed) {
+  return parsed.profiles.filter(p => !p.skip).map(p => {
+    const args = [...parsed.global, "--new=" + p.name, ...p.args];
+    const inst = p.args.filter(a => /^--lua-desync=/i.test(a)).map(a => val(a));
+    const markers = []; let proto = [], udp = false;
+    const l7 = p.args.find(a => /^--filter-l7=/i.test(a));
+    if (l7) proto = val(l7).toLowerCase().split(",");
+    inst.forEach(v => {
+      const fn = v.split(":")[0];
+      if (/^(udplen|dht_dn)$/i.test(fn)) udp = true;
+      if (!proto.length && /^http_/i.test(fn)) proto = ["http"];
+      if (!proto.length && /^(tls_client_hello_clone|multisplit|multidisorder|fakedsplit|fakeddisorder|hostfakesplit|tcpseg|fake|syndata)$/i.test(fn)) proto = ["tls"];
+      v.split(":").slice(1).forEach(part => {
+        const m = part.match(/^(pos|midhost|disorder_after|seqovl)=([^=]*)$/);
+        if (m && m[2] && !/^\d+$/.test(m[2])) m[2].split(",").forEach(x => markers.push(x));
+      });
+    });
+    if (p.args.some(a => /^--filter-udp=/i.test(a))) udp = true;
+    return { name: p.name, args, markers, proto, udp };
+  });
+}
+
+function markerOk(m, host) {
+  m = m.trim().toLowerCase();
+  if (/^-?\d+$/.test(m)) return true;
+  const dotted = !!host && host.includes(".");
+  if (m === "host" || m.startsWith("endhost") || m.startsWith("host+") || m.startsWith("endhost-")) return dotted;
+  if (m === "midsld" || m === "sld" || m === "endsld" || m.startsWith("midsld+") || m.startsWith("sld+")) {
+    const parts = String(host).split(".");
+    return parts.length >= 2 && parts[parts.length - 2].length > 0;
+  }
+  return true;
+}
+
+export function staticCheck(s, domain) {
+  const protos = domainProtos(domain);
+  const need = s.proto.length ? s.proto : (s.udp ? ["quic", "udp"] : ["tls", "http"]);
+  const reasons = []; let level = "ok";
+  if (!need.some(p => protos.includes(p))) { level = "bad"; reasons.push(`Стратегия для ${need.join("/")}, а домен — ${protos.join("/")}`); }
+  if (s.udp && !protos.includes("quic") && !protos.includes("udp")) { if (level === "ok") level = "warn"; reasons.push("UDP-стратегия: домен не помечен как QUIC/UDP"); }
+  s.markers.forEach(m => { if (!markerOk(m, domain)) { if (level !== "bad") level = "warn"; reasons.push(`Маркер «${m}» не разрешится для ${domain}`); } });
+  if (!reasons.length) reasons.push("Совместимо: фильтры и маркеры подходят домену");
+  return { level, reasons };
+}
+
+export function genPs1(strategies, domains, { timeout = 8 } = {}) {
+  const domPS = "@(" + domains.map(psq).join(",") + ")";
+  const strPS = strategies.map(s => "  @{ Name=" + psq(s.name) + "; Args=@(" + s.args.map(psq).join(",") + ") }").join(",\n");
+  return `param([string]$Winws, [int]$Timeout = ${timeout}, [switch]$Quic)
+# test-zapret.ps1 - generated by zapret2-ui-docs
+# Zapustite PowerShell OT ADMINISTRATORA v papke s winws2.exe, WinDivert i lua\\
+#Requires -RunAsAdministrator
+$ErrorActionPreference = "SilentlyContinue"
+if (-not $Winws) { $Winws = Join-Path $PSScriptRoot "winws2.exe" }
+if (-not (Test-Path $Winws)) { Write-Host "winws2.exe ne nayden: $Winws" -ForegroundColor Red; exit 1 }
+$root = $PSScriptRoot + "\\"
+$Domains = ${domPS}
+$Strategies = @(
+${strPS}
+)
+$Results = New-Object System.Collections.Generic.List[object]
+$curl = Get-Command curl.exe -ErrorAction SilentlyContinue
+function Test-Url([string]$Url) {
+  $sw = [Diagnostics.Stopwatch]::StartNew()
+  try {
+    $r = Invoke-WebRequest -Uri $Url -TimeoutSec $Timeout -UseBasicParsing -MaximumRedirection 0
+    $sw.Stop(); return @{ ok=$true; status=[int]$r.StatusCode; ms=[int]$sw.ElapsedMilliseconds; err="" }
+  } catch {
+    $sw.Stop()
+    $resp = $_.Exception.Response
+    if ($resp) { return @{ ok=$true; status=[int]$resp.StatusCode; ms=[int]$sw.ElapsedMilliseconds; err="" } }
+    return @{ ok=$false; status=0; ms=[int]$sw.ElapsedMilliseconds; err=[string]$_.Exception.Message }
+  }
+}
+function Add-Row($s, $d, $proto, $t) {
+  $Results.Add([pscustomobject]@{ strategy=$s; domain=$d; proto=$proto; ok=$t.ok; status=$t.status; ms=$t.ms; err=$t.err })
+  $mark = "FAIL"; if ($t.ok) { $mark = "OK" }
+  Write-Host ("{0,-24} {1,-30} {2,-6} {3,-5} {4,6} ms  {5}" -f $s, $d, $proto, $mark, $t.ms, $t.status)
+}
+Write-Host "=== baseline (bez zapret) ===" -ForegroundColor Yellow
+foreach ($d in $Domains) { foreach ($proto in @("https","http")) { Add-Row "baseline" $d $proto (Test-Url ($proto + "://" + $d)) } }
+$i = 0
+foreach ($s in $Strategies) {
+  $i++
+  $cfg = Join-Path $PSScriptRoot ("_zapret_test_" + $i + ".cfg")
+  $expanded = $s.Args | ForEach-Object { $_.Replace("%~dp0", $root).Replace("%~DP0", $root) }
+  Set-Content -Path $cfg -Value ($expanded -join [Environment]::NewLine) -Encoding ASCII
+  Write-Host ""
+  Write-Host ("=== " + $s.Name + " ===") -ForegroundColor Cyan
+  $p = Start-Process -FilePath $Winws -ArgumentList ("@" + $cfg) -WorkingDirectory $PSScriptRoot -PassThru -WindowStyle Hidden
+  Start-Sleep -Milliseconds 800
+  foreach ($d in $Domains) {
+    foreach ($proto in @("https","http")) { Add-Row $s.Name $d $proto (Test-Url ($proto + "://" + $d)) }
+    if ($Quic -and $curl) {
+      $code = & curl.exe --http3 -s -o NUL -w "%{http_code}" --max-time $Timeout ("https://" + $d) 2>$null
+      $qok = ($LASTEXITCODE -eq 0 -and $code -match "^[23]")
+      $Results.Add([pscustomobject]@{ strategy=$s.Name; domain=$d; proto="quic"; ok=$qok; status=[int]$code; ms=0; err="" })
+    }
+  }
+  Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+  Remove-Item $cfg -ErrorAction SilentlyContinue
+  Start-Sleep -Milliseconds 500
+}
+$Results | Export-Csv -Path (Join-Path $PSScriptRoot "zapret-test.csv") -NoTypeInformation -Encoding UTF8
+$Results | ConvertTo-Json -Depth 4 | Set-Content -Path (Join-Path $PSScriptRoot "zapret-test.json") -Encoding UTF8
+Write-Host ""
+Write-Host ("Gotovo. Stroki: " + $Results.Count + ". Fayly: zapret-test.csv / zapret-test.json") -ForegroundColor Green
+Write-Host "Vernite zapret-test.json na stranicu 'Test strategiy' dlya matricy rezultatov."
+`;
+}
+
+function splitCsv(line) {
+  const out = []; let cur = "", q = false;
+  for (const ch of line) { if (ch === '"') q = !q; else if (ch === "," && !q) { out.push(cur); cur = ""; } else cur += ch; }
+  out.push(cur);
+  return out.map(s => s.trim().replace(/^"|"$/g, ""));
+}
+
+export function parseResults(text) {
+  const t = String(text || "").trim();
+  if (!t) return { rows: [], error: null };
+  let rows = [];
+  try {
+    const j = JSON.parse(t);
+    const arr = Array.isArray(j) ? j : (j.value || j.Results || []);
+    rows = arr.map(r => ({ strategy: String(r.strategy ?? r.Strategy ?? ""), domain: String(r.domain ?? r.Domain ?? ""), proto: String(r.proto ?? r.Proto ?? ""), ok: truthy(r.ok ?? r.Ok), status: +(r.status ?? r.Status ?? 0), ms: +(r.ms ?? r.Ms ?? 0), err: String(r.err ?? r.Err ?? "") }));
+  } catch {
+    const lines = t.split(/\r?\n/).filter(l => l.trim());
+    const head = (lines[0] || "").toLowerCase();
+    if (head.includes("strategy") && head.includes("domain")) {
+      const cols = splitCsv(lines[0]).map(c => c.toLowerCase());
+      const idx = k => cols.indexOf(k);
+      rows = lines.slice(1).map(l => { const c = splitCsv(l); const g = k => { const i = idx(k); return i >= 0 ? c[i] : ""; }; return { strategy: g("strategy"), domain: g("domain"), proto: g("proto"), ok: truthy(g("ok")), status: +g("status") || 0, ms: +g("ms") || 0, err: g("err") }; });
+    } else return { rows: [], error: "Не распознано: вставьте JSON или CSV из test-zapret.ps1" };
+  }
+  rows = rows.filter(r => r.strategy && r.domain);
+  return { rows, error: rows.length ? null : "Пусто" };
+}
+
+export function bestByDomain(rows) {
+  const map = {};
+  rows.filter(r => r.ok && r.strategy !== "baseline").forEach(r => {
+    const score = (r.proto === "https" ? 0 : r.proto === "quic" ? 1 : 2) * 100000 + r.ms;
+    const cur = map[r.domain];
+    if (!cur || score < cur.score) map[r.domain] = { strategy: r.strategy, proto: r.proto, ms: r.ms, score };
+  });
+  return map;
+}
