@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import Page from "../components/Page";
 import Code from "../components/Code";
 import { genLua, TEMPLATES, DEFAULT_CFG } from "../lib/genLua";
 import { checkLua } from "../lib/checkLua";
 import { setLua } from "../lib/store";
-import { fns as capi } from "./CApi";
-import { fns as lib } from "./Lib";
-import { fns as antidpi } from "./Antidpi";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 import "../styles/builder.css";
 
 const KNOWN = new Set([...capi, ...lib, ...antidpi, ...auto].map(f => f.name));

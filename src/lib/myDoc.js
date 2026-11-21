@@ -1,10 +1,10 @@
-import { loadVault } from "./vault";
+﻿import { loadVault } from "./vault";
 import { docLua, KIND_RU } from "./luadoc";
 import { hueFor } from "./intake";
-import { fns as capi } from "../pages/CApi";
-import { fns as lib } from "../pages/Lib";
-import { fns as antidpi } from "../pages/Antidpi";
-import { fns as auto } from "../pages/Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 
 const KNOWN = new Set([...capi, ...lib, ...antidpi, ...auto].map(f => f.name));
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import Page from "../components/Page";
 import Code from "../components/Code";
 import Intake from "../components/Intake";
@@ -9,10 +9,10 @@ import { fixLua, FIX_RULES } from "../lib/fixLua";
 import { mdReport } from "../lib/diff";
 import { reconcile, describeFn, STATUS_RU, ACTION_RU } from "../lib/sync";
 import { hueFor } from "../lib/intake";
-import { fns as capi } from "./CApi";
-import { fns as lib } from "./Lib";
-import { fns as antidpi } from "./Antidpi";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 import "../styles/vault.css";
 
 const KNOWN = new Set([...capi, ...lib, ...antidpi, ...auto].map(f => f.name));

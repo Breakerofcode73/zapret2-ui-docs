@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import Page from "../components/Page";
 import Code from "../components/Code";
 import { fixLua, FIX_RULES } from "../lib/fixLua";
 import { mdReport } from "../lib/diff";
 import { getLua, setLua } from "../lib/store";
-import { fns as capi } from "./CApi";
-import { fns as lib } from "./Lib";
-import { fns as antidpi } from "./Antidpi";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 import "../styles/builder.css";
 import "../styles/fixreport.css";
 

@@ -1,9 +1,9 @@
-import Page from "../components/Page";
+﻿import Page from "../components/Page";
 import Code from "../components/Code";
-import { fns as capi } from "./CApi";
-import { fns as antidpi } from "./Antidpi";
-import { fns as lib } from "./Lib";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as lib } from "../ref/Lib";
+import { fns as auto } from "../ref/Auto";
 
 export default function Overview() {
   return (

@@ -1,48 +1,46 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import Overview from "./pages/Overview";
-import Contract from "./pages/Contract";
-import Writing from "./pages/Writing";
-import Anatomy from "./pages/Anatomy";
-import Checklist from "./pages/Checklist";
-import Debugging from "./pages/Debugging";
-import StdArgs from "./pages/StdArgs";
-import Blobs from "./pages/Blobs";
-import Markers from "./pages/Markers";
-import Coverage from "./pages/Coverage";
-import Builder from "./pages/Builder";
-import Diagnose from "./pages/Diagnose";
-import Fixer from "./pages/Fixer";
-import FixBat from "./pages/FixBat";
-import Hostlists from "./pages/Hostlists";
-import BatLua from "./pages/BatLua";
-import UpdateDiff from "./pages/UpdateDiff";
-import Vault from "./pages/Vault";
-import History from "./pages/History";
-import RunConfig from "./pages/RunConfig";
-import MyApi from "./pages/MyApi";
-import Idea from "./pages/Idea";
-import Dedup from "./pages/Dedup";
-import DeepIndex from "./pages/DeepIndex";
-import DeepRoute from "./pages/DeepRoute";
-import CApi, { fns as capiFns } from "./pages/CApi";
-import Antidpi, { fns as antidpiFns } from "./pages/Antidpi";
-import Lib, { fns as libFns } from "./pages/Lib";
-import Auto, { fns as autoFns } from "./pages/Auto";
-import Assistant from "./pages/Assistant";
+import Contract from "./learn/Contract";
+import Writing from "./learn/Writing";
+import Anatomy from "./learn/Anatomy";
+import Checklist from "./learn/Checklist";
+import Debugging from "./learn/Debugging";
+import StdArgs from "./ref/StdArgs";
+import Blobs from "./ref/Blobs";
+import Markers from "./ref/Markers";
+import Coverage from "./deep/Coverage";
+import Builder from "./forge/Builder";
+import Diagnose from "./check/Diagnose";
+import Fixer from "./check/Fixer";
+import FixBat from "./check/FixBat";
+import Hostlists from "./strategy/Hostlists";
+import BatLua from "./check/BatLua";
+import UpdateDiff from "./check/UpdateDiff";
+import Vault from "./vault/Store";
+import History from "./vault/History";
+import RunConfig from "./strategy/Run";
+import MyApi from "./vault/MyApi";
+import Idea from "./forge/Idea";
+import Dedup from "./vault/Dedup";
+import DeepIndex from "./deep/Index";
+import DeepRoute from "./deep/Route";
+import CApi, { fns as capiFns } from "./ref/CApi";
+import Antidpi, { fns as antidpiFns } from "./ref/Antidpi";
+import Lib, { fns as libFns } from "./ref/Lib";
+import Auto, { fns as autoFns } from "./ref/Auto";
+import Assistant from "./vault/Assistant";
 import { KIND } from "./components/Fn";
 import { DEEP, coveredNames } from "./data/deep";
 import { subscribe } from "./lib/vault";
 import { collectMy } from "./lib/myDoc";
 import "./styles/print.css";
-import Strategy from "./pages/Strategy";
-import StrategyTest from "./pages/StrategyTest";
-import Audit from "./pages/Audit";
-import Describe from "./pages/Describe";
+import Strategy from "./strategy/Catalog";
+import StrategyTest from "./strategy/Test";
+import Audit from "./check/Audit";
+import Describe from "./forge/Describe";
 import Forge from "./pages/Forge";
-import ForgeGuide from "./pages/ForgeGuide";
 const PAGES = [
-      { id: "forgeguide", group: "Мои функции", title: "Кузница — как работает", C: ForgeGuide },
-    { id: "describe", group: "Мои функции", title: "Описание → функция", C: Describe },
+      { id: "describe", group: "Мои функции", title: "Описание → функция", C: Describe },
     { id: "audit", group: "Практика", title: "Разбор всех BAT", C: Audit },
     { id: "strategytest", group: "Практика", title: "Тест стратегий", C: StrategyTest },
     { id: "fixbat", group: "Практика", title: "Исправление BAT", C: FixBat },
@@ -75,7 +73,7 @@ const PAGES = [
   { id: "antidpi", group: "Справочник", title: "zapret-antidpi.lua", C: Antidpi, fns: antidpiFns },
   { id: "lib", group: "Справочник", title: "zapret-lib.lua", C: Lib, fns: libFns },
   { id: "auto", group: "Справочник", title: "zapret-auto.lua", C: Auto, fns: autoFns },
-    { id: "forge", group: "Мои функции", title: "Кузница функций", C: Forge },
+    { id: "forge", group: "Мои функции", title: "Кузница", C: Forge },
 ];
 const GROUPS = ["Начало", "Разборы", "Мои функции", "Практика", "Справочник"];
 const TOTAL = [...capiFns, ...antidpiFns, ...libFns, ...autoFns].length;

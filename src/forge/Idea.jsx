@@ -1,14 +1,14 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import Page from "../components/Page";
 import Code from "../components/Code";
 import { OPS, parseIdea, assess, reformulate, LIMITS } from "../lib/intent";
 import { matchStrategies, synthesize } from "../lib/synth";
 import { addItem } from "../lib/vault";
 import { checkLua } from "../lib/checkLua";
-import { fns as capi } from "./CApi";
-import { fns as lib } from "./Lib";
-import { fns as antidpi } from "./Antidpi";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 import "../styles/idea.css";
 
 const KNOWN = new Set([...capi, ...lib, ...antidpi, ...auto].map(f => f.name));

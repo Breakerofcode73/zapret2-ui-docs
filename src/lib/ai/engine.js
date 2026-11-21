@@ -1,4 +1,4 @@
-import { buildCorpus } from "./corpus";
+﻿import { buildCorpus } from "./corpus";
 import { buildIndex, search, tokens } from "./tfidf";
 import { buildGraph, activate, clusters } from "./graph";
 import { bias as memBias, recall, remember } from "./memory";
@@ -8,10 +8,10 @@ import { buildVariants } from "./variants";
 import { OPS, assess } from "../intent";
 import { synthesize } from "../synth";
 import { checkLua } from "../checkLua";
-import { fns as capi } from "../../pages/CApi";
-import { fns as lib } from "../../pages/Lib";
-import { fns as antidpi } from "../../pages/Antidpi";
-import { fns as auto } from "../../pages/Auto";
+import { fns as capi } from "../../ref/CApi";
+import { fns as lib } from "../../ref/Lib";
+import { fns as antidpi } from "../../ref/Antidpi";
+import { fns as auto } from "../../ref/Auto";
 
 const KNOWN = new Set([...capi, ...lib, ...antidpi, ...auto].map(f => f.name));
 let E = null;
@@ -52,7 +52,8 @@ export function interpret(phrase, ctx = { target: "original", transport: "tcp", 
     : d.kind === "profile" ? 1.12 : d.kind === "state" ? 1.12 : d.kind === "pitfall" ? 1.1 : 1;
   const raw = search(eng.index, phrase, 30, weights);
   const opHits = raw.filter(r => r.doc.kind === "op");
-  const bestBm = opHits[0]?.score || 0;
+  const lmaxRaw = Math.max(0, ...[...learned.out.values()].map(Math.abs));
+  const bestBm = opHits[0]?.score || (lmaxRaw > 0 ? 0.6 : 0);
   const lmax = Math.max(0.001, ...[...learned.out.values()].map(Math.abs));
   const cand = Object.keys(OPS).map(op => {
     const bm = opHits.find(r => r.doc.meta.op === op);

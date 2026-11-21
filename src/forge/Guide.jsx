@@ -1,4 +1,4 @@
-// src/pages/ForgeGuide.jsx
+﻿// src/pages/ForgeGuide.jsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /* ══════════════════════════ дизайн-система ══════════════════════════ */

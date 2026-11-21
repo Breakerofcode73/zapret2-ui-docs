@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import Page from "../components/Page";
-import { fns as capi } from "./CApi";
-import { fns as antidpi } from "./Antidpi";
-import { fns as lib } from "./Lib";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as lib } from "../ref/Lib";
+import { fns as auto } from "../ref/Auto";
 import { DEEP, coveredNames, byId } from "../data/deep";
 
 const SOURCES = [

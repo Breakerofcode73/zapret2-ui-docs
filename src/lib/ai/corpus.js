@@ -1,11 +1,11 @@
-import { C_FUNCS } from "../../data/capi";
+﻿import { C_FUNCS } from "../../data/capi";
 import { MARKERS } from "../../data/markers";
 import { DEEP } from "../../data/deep";
 import { loadVault } from "../vault";
 import { docLua } from "../luadoc";
-import { fns as antidpi } from "../../pages/Antidpi";
-import { fns as lib } from "../../pages/Lib";
-import { fns as auto } from "../../pages/Auto";
+import { fns as antidpi } from "../../ref/Antidpi";
+import { fns as lib } from "../../ref/Lib";
+import { fns as auto } from "../../ref/Auto";
 import { OPS } from "../intent";
 
 // Авторские описания операций: чем богаче перефразировки, тем шире понимание.

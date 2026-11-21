@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import Page from "../components/Page";
 import Code from "../components/Code";
 import { loadVault, subscribe, rollback, labelVersion, dropVersion, replaceAll } from "../lib/vault";
@@ -7,10 +7,10 @@ import { diffLines, hunks } from "../lib/diff";
 import { hueFor } from "../lib/intake";
 import { getConfig } from "../lib/store";
 import { bundle, save } from "../lib/pack";
-import { fns as capi } from "./CApi";
-import { fns as lib } from "./Lib";
-import { fns as antidpi } from "./Antidpi";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 import "../styles/extra.css";
 
 const KNOWN = new Set([...capi, ...lib, ...antidpi, ...auto].map(f => f.name));

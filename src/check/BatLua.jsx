@@ -1,14 +1,14 @@
-import { useMemo, useRef, useState } from "react";
+﻿import { useMemo, useRef, useState } from "react";
 import Page from "../components/Page";
 import { checkBundle, kindOf, sniff } from "../lib/checkBundle";
 import { parseProfile, DEFAULT_PROFILE } from "../lib/checkBat";
 import { loadRegistry } from "../data/flags";
 import { splitFiles, looksLikeCode } from "../lib/intake";
 import { save } from "../lib/pack";
-import { fns as capi } from "./CApi";
-import { fns as lib } from "./Lib";
-import { fns as antidpi } from "./Antidpi";
-import { fns as auto } from "./Auto";
+import { fns as capi } from "../ref/CApi";
+import { fns as lib } from "../ref/Lib";
+import { fns as antidpi } from "../ref/Antidpi";
+import { fns as auto } from "../ref/Auto";
 import "../styles/builder.css";
 import "../styles/checkers.css";
 

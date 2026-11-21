@@ -148,3 +148,8 @@ details summary { cursor: pointer; color: var(--cyan); font-size: 13px; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
 }
+/* Вкладки Кузницы */
+.forge-tabs{display:flex;gap:8px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.forge-tab{background:var(--card);color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:8px 16px;cursor:pointer;font-size:14px;transition:all .18s}
+.forge-tab:hover{color:var(--tx);border-color:var(--cyan)}
+.forge-tab.on{background:linear-gradient(120deg,var(--cyan),var(--blue));color:#04101c;font-weight:700;border-color:transparent}

@@ -1,4 +1,4 @@
-import { parseConfig } from "../configRun";
+﻿import { parseConfig } from "../configRun";
 import { getConfig } from "../store";
 import { loadVault } from "../vault";
 import { docLua } from "../luadoc";
@@ -9,9 +9,9 @@ import { DEEP } from "../../data/deep";
 import { C_FUNCS } from "../../data/capi";
 import { baseRegistry } from "../../data/flags";
 import { findClusters } from "../dedup";
-import { fns as lib } from "../../pages/Lib";
-import { fns as antidpi } from "../../pages/Antidpi";
-import { fns as auto } from "../../pages/Auto";
+import { fns as lib } from "../../ref/Lib";
+import { fns as antidpi } from "../../ref/Antidpi";
+import { fns as auto } from "../../ref/Auto";
 
 const KNOWN = new Set([...C_FUNCS.map(f => f.name), ...lib.map(f => f.name), ...antidpi.map(f => f.name), ...auto.map(f => f.name)]);
 
